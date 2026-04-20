@@ -38,15 +38,32 @@ GROUP BY CustomerID;
 
 -------------------------- FIRST_VALUE() / LAST_VALUE() ----------------------
 
--- Find highest and lowest sales.
+-- Find highest and lowest sales for each product.
 
 SELECT 
 	OrderId,
 	ProductId,
 	OrderDate,
 	Sales,
-	FIRST_VALUE(Sales) OVER(PARTITION BY ProductId ORDER BY Sales ASC)  LowestSales,
+	FIRST_VALUE(Sales) OVER(PARTITION BY ProductId ORDER BY Sales)  LowestSales,
 	LAST_VALUE(Sales) OVER(PARTITION BY ProductId ORDER BY Sales  
-	ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING) HighestSales
+	ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING) HighestSales,
+	MIN(Sales) OVER(PARTITION BY ProductID) LowestSales2,
+	MAX(Sales) OVER(PARTITION BY ProductID) HighestSales2
 FROM Sales.Orders;
+
+
+-- Find Difference between Sales and Lowest Sales.
+
+SELECT 
+	OrderId,
+	ProductId,
+	Sales,
+	FIRST_VALUE(Sales) OVER(PARTITION BY ProductId ORDER BY Sales)  LowestSales,
+	LAST_VALUE(Sales) OVER(PARTITION BY ProductId ORDER BY Sales  
+	ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING) HighestSales,
+	Sales - FIRST_VALUE(Sales) OVER(PARTITION BY ProductId ORDER BY Sales) AS SalesDiff
+FROM Sales.Orders;
+
+
 
