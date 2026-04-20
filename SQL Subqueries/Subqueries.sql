@@ -1,5 +1,7 @@
 use SalesDB;
 
+
+-------------------------- Subqueries in FROM Clause ------------------------------
 -- Find product that have the price higher than the average price of all products.
 
 SELECT *
@@ -24,3 +26,36 @@ FROM
 	FROM Sales.Orders
 	GROUP BY CustomerID
 	) AS t
+
+
+-------------------------- Subqueries in SELECT Clause ------------------------------
+
+-- Show productID , names , prices and total number of orders.
+
+SELECT 
+	ProductID,
+	Product,
+	price,
+	(SELECT COUNT(*) FROM Sales.Orders) AS TotalOrders  -- Only Scalar Subquery is allowed here.
+FROM sales.Products;
+
+
+
+-------------------------- Subqueries in JOIN Clause ------------------------------
+
+-- show all customer details and find total orders of each customer.
+
+SELECT 
+	c.*,
+	o.TotalOrders
+FROM sales.customers c
+LEFT JOIN
+(
+	SELECT 
+		customerID, 
+		COUNT(OrderID) AS TotalOrders 
+	FROM sales.orders
+	GROUP BY CustomerID) o
+ON c.CustomerID = o.CustomerID;
+
+
