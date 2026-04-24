@@ -58,4 +58,40 @@ LEFT JOIN
 	GROUP BY CustomerID) o
 ON c.CustomerID = o.CustomerID;
 
+-------------------------- Subqueries in WHERE Clause ------------------------------
+
+-- Find products having price higher than the average price of all products.
+
+SELECT
+	ProductID, 
+	Price
+FROM Sales.Products
+WHERE Price > (SELECT AVG(Price) FROM Sales.Products);
+
+
+-------------------------- Subqueries in IN Operator ------------------------------
+
+-- show details of orders made by customers in Germany
+
+SELECT *
+FROM Sales.Orders
+WHERE CustomerID IN (SELECT CustomerID FROM Sales.Customers WHERE Country = 'Germany');
+
+
+-------------------------- Subqueries in ANY Operator ------------------------------
+
+-- Find female employees with salaries greater than male employees
+SELECT * FROM Sales.Employees
+WHERE Gender = 'F' 
+AND Salary > ANY(SELECT Salary FROM Sales.Employees WHERE Gender = 'M');
+
+
+-------------------------- Subqueries in ALL Operator ------------------------------
+
+-- find female employees whose salaries are greated than every male employees.
+
+SELECT * FROM Sales.Employees
+WHERE Gender = 'F' 
+AND Salary > ALL(SELECT Salary FROM Sales.Employees WHERE Gender = 'M');
+
 
